@@ -2,6 +2,8 @@ html,
 body {
     height: 100%;
 /* The html and body elements cannot have any padding or margin. */
+    font-family: 'Lato';
+    text-rendering: optimizeLegibility;
 }
 .no-overflow {
     overflow: hidden;
@@ -276,6 +278,7 @@ input[type=text], input[type=password], #sendMessage {
     -webkit-transition:0.2 ease-in-out all;
     transition:0.2s ease-in-out all;
     -webkit-overflow-scrolling: touch; /* Native scroll on ios */
+    font-size: 13px;
 }
 #bufferlines > table {
     margin-top: 35px;
@@ -288,6 +291,8 @@ tr.bufferline {
 td.time {
     padding: 1px 5px 1px 1px;
     vertical-align: top;
+    border-collapse: separate;
+    border-spacing: 0px 2px;
 }
 
 .withnicklist {
