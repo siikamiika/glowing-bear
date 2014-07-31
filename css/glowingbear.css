@@ -35,6 +35,9 @@ td.prefix {
     padding-left: 4px;
 }
 td.message {
+    display: inline;
+    word-wrap: break-word;
+    word-break: break-word;
     vertical-align: top;
     width: 100%;
     padding: 1px 1px 1px 5px;
@@ -50,6 +53,10 @@ td.message {
     -ms-hyphens: auto;
         hyphens: auto;
 
+}
+
+td.message div.plugin, td.message div.pluginToggle {
+    display: inline;
 }
 
 #readmarker {
@@ -297,6 +304,7 @@ td.time {
     vertical-align: top;
     border-collapse: separate;
     border-spacing: 0px 2px;
+    display: inline;
 }
 
 .withnicklist {

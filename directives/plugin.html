@@ -1,4 +1,4 @@
-<div ng-show="plugin.visible">
+<div class="pluginToggle" ng-show="plugin.visible">
   <button class="btn btn-default btn-sm pull-right unselectable"
           ng-click="hideContent()">
     Hide {{ ::plugin.name }}
@@ -7,7 +7,7 @@
   <div ng-bind-html="displayedContent" class="embed" ng-class="::plugin.className"></div>
 </div>
 
-<div ng-hide="plugin.visible">
+<div class="pluginToggle" ng-hide="plugin.visible">
   <button class="btn btn-default btn-sm pull-right unselectable"
           ng-class="::{
                     'btn-warning': plugin.nsfw,
