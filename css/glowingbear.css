@@ -111,7 +111,7 @@ input[type=text], input[type=password], #sendMessage, .badge {
 }
 #topbar .title {
     position: fixed;
-    left: 145px; /* sidebar */
+    left: 225px; /* sidebar */
     overflow: hidden;
 }
 #topbar .actions {
@@ -137,14 +137,14 @@ input[type=text], input[type=password], #sendMessage, .badge {
 
 #sidebar {
     position: fixed;
-    width: 140px;
+    width: 220px;
     min-height: 100%;
     height: 100%;
     overflow-y: auto;
     overflow-x: hidden;
     padding-top: 35px; /* topbar */
     padding-bottom: 1px; /* need to force a padding here */
-    font-size: smaller;
+    font-size: small;
     transition:0.2s ease-in-out;
     z-index: 2;
 }
@@ -177,7 +177,7 @@ input[type=text], input[type=password], #sendMessage, .badge {
 
 #nicklist {
     position: fixed;
-    width: 100px;
+    width: 200px;
     min-height: 100%;
     height: 100%;
     overflow-y: auto;
@@ -247,6 +247,9 @@ input[type=text], input[type=password], #sendMessage, .badge {
 tr.bufferline {
     line-height: 100%;
 }
+tr.bufferline.nonhuman {
+  opacity: 0.4
+}
 
 td.time {
     padding: 1px 5px 1px 1px;
@@ -254,10 +257,10 @@ td.time {
 }
 
 .withnicklist {
-    margin-right: 100px !important; /* nicklist */
+    margin-right: 200px !important; /* nicklist */
 }
 .content[sidebar-state=visible] #bufferlines {
-    margin-left: 145px;    /* sidebar */
+    margin-left: 225px;    /* sidebar */
 }
 #bufferlines .btn {
     font-family: sans-serif;
@@ -274,10 +277,10 @@ td.time {
 }
 .content[sidebar-state=visible] .footer {
     margin-left: 0;
-    padding-left: 145px;
+    padding-left: 225px;
 }
 .footer.withnicklist {
-    padding-right: 100px;
+    padding-right: 200px;
 }
 
 /* fix for mobile firefox which ignores :hover */
@@ -506,6 +509,19 @@ li.buffer.channel.active a:hover span:last-of-type:before {
 
 li.buffer.indent.private a {
     padding-left: 17px;
+}
+
+li.buffer.unreadmessage {
+  background-color: #752c2a;
+}
+
+li.buffer.unreadhighlight {
+  background-color: #a100a1 !important;
+}
+
+li.buffer a[title^="irc.server"] {
+  background: linear-gradient(#101010, #282828);
+  font-weight: bold;
 }
 
 .make-thinner {

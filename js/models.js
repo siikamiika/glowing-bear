@@ -333,18 +333,20 @@ models.service('models', ['$rootScope', '$filter', function($rootScope, $filter)
             rtext += content[i].text;
         }
 
-       return {
-            prefix: prefix,
-            content: content,
-            date: date,
-            shortTime: shortTime,
-            buffer: buffer,
-            tags: tags_array,
-            highlight: highlight,
-            displayed: displayed,
-            text: rtext
+        console.log(tags_array);
 
-        };
+        return {
+              prefix: prefix,
+              content: content,
+              date: date,
+              shortTime: shortTime,
+              buffer: buffer,
+              tags: tags_array,
+              highlight: highlight,
+              displayed: displayed,
+              text: rtext,
+              is_nonhuman: tags_array.indexOf("irc_privmsg") == -1
+          };
 
     };
 
