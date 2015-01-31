@@ -388,7 +388,17 @@ $ openssl req -nodes -newkey rsa:4096 -keyout relay.pem -x509 -days 365 -out rel
                 <form class="form-inline" role="form">
                   <div class="checkbox">
                     <label>
-                      <input type="checkbox" ng-model="settings.nonicklist">
+                      <input type="checkbox" ng-model="scrolltoreadline">
+                      Scroll to last read message on buffer change
+                    </label>
+                  </div>
+                </form>
+              </li>
+              <li>
+                <form class="form-inline" role="form">
+                  <div class="checkbox">
+                    <label>
+                      <input type="checkbox" ng-model="nonicklist">
                       Hide nicklist
                     </label>
                   </div>
