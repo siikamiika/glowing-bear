@@ -333,8 +333,6 @@ models.service('models', ['$rootScope', '$filter', function($rootScope, $filter)
             rtext += content[i].text;
         }
 
-        console.log(tags_array);
-
         return {
               prefix: prefix,
               content: content,
