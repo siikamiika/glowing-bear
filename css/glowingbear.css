@@ -248,7 +248,7 @@ tr.bufferline {
     line-height: 100%;
 }
 tr.bufferline.nonhuman {
-  opacity: 0.4
+    opacity: 0.4
 }
 
 td.time {
@@ -264,6 +264,11 @@ td.time {
 }
 #bufferlines .btn {
     font-family: sans-serif;
+    font-size: 60%;
+    background-color: transparent;
+    padding: 0;
+    margin: 0;
+    height: 1.5em;
 }
 
 .footer {
