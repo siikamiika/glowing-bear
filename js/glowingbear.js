@@ -165,7 +165,7 @@ weechat.controller('WeechatCtrl', ['$rootScope', '$scope', '$store', '$timeout',
             connection.requestNicklist(ab.fullName, function() {
                 $scope.showNicklist = $scope.updateShowNicklist();
                 // Scroll after nicklist has been loaded, as it may break long lines
-                $rootScope.scrollWithBuffer($scope.scrolltoreadline);
+                $rootScope.scrollWithBuffer(true);
             });
         } else {
             // Check if we should show nicklist or not
@@ -198,7 +198,7 @@ weechat.controller('WeechatCtrl', ['$rootScope', '$scope', '$store', '$timeout',
                             }
                         };
                         $rootScope.updateBufferBottom(true);
-                        $rootScope.scrollWithBuffer($scope.scrolltoreadline);
+                        $rootScope.scrollWithBuffer(true);
                         bl.onscroll = _.debounce(function() {
                             $rootScope.updateBufferBottom();
                         }, 80);
@@ -210,7 +210,7 @@ weechat.controller('WeechatCtrl', ['$rootScope', '$scope', '$store', '$timeout',
         notifications.updateTitle(ab);
 
         $timeout(function() {
-            $rootScope.scrollWithBuffer($scope.scrolltoreadline);
+            $rootScope.scrollWithBuffer(true);
         });
         // If user wants to sync hotlist with weechat
         // we will send a /buffer bufferName command every time
@@ -459,7 +459,7 @@ weechat.controller('WeechatCtrl', ['$rootScope', '$scope', '$store', '$timeout',
             }
             $rootScope.bufferBottom = eob.offsetTop <= bl.scrollTop + bl.clientHeight;
     };
-    $rootScope.scrollWithBuffer = function(scrollToReadmarker, moreLines) {
+    $rootScope.scrollWithBuffer = function(switchBuffer, moreLines) {
         // First, get scrolling status *before* modification
         // This is required to determine where we were in the buffer pre-change
         var bl = document.getElementById('bufferlines');
@@ -470,9 +470,9 @@ weechat.controller('WeechatCtrl', ['$rootScope', '$scope', '$store', '$timeout',
             // Determine if we want to scroll at all
             // Give the check 3 pixels of slack so you don't have to hit
             // the exact spot. This fixes a bug in some browsers
-            if (((scrollToReadmarker || moreLines) && sTop < sVal) || (Math.abs(sTop - sVal) < 3)) {
+            if (((switchBuffer || moreLines) && sTop < sVal) || (Math.abs(sTop - sVal) < 3)) {
                 var readmarker = document.querySelector(".readmarker");
-                if (scrollToReadmarker && readmarker) {
+                if (switchBuffer && readmarker && $scope.scrolltoreadline) {
                     // Switching channels, scroll to read marker
                     bl.scrollTop = readmarker.offsetTop - readmarker.parentElement.scrollHeight + readmarker.scrollHeight;
                 } else if (moreLines) {
