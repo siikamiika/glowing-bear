@@ -392,7 +392,7 @@ plugins.factory('userPlugins', function() {
 
     return {
 //        plugins: [youtubePlugin, dailymotionPlugin, allocinePlugin, imagePlugin, spotifyPlugin, cloudmusicPlugin, googlemapPlugin, asciinemaPlugin, yrPlugin, gistPlugin, tweetPlugin]
-        plugins: []
+        plugins: [imagePlugin]
     };
 
 
