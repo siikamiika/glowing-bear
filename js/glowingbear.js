@@ -145,7 +145,7 @@ weechat.controller('WeechatCtrl', ['$rootScope', '$scope', '$store', '$timeout',
             connection.requestNicklist(ab.fullName, function() {
                 $scope.showNicklist = $scope.updateShowNicklist();
                 // Scroll after nicklist has been loaded, as it may break long lines
-                $rootScope.scrollWithBuffer(true);
+                $rootScope.scrollWithBuffer($scope.scrolltoreadline);
             });
         } else {
             // Check if we should show nicklist or not
@@ -178,7 +178,7 @@ weechat.controller('WeechatCtrl', ['$rootScope', '$scope', '$store', '$timeout',
                             }
                         };
                         $rootScope.updateBufferBottom(true);
-                        $rootScope.scrollWithBuffer(true);
+                        $rootScope.scrollWithBuffer($scope.scrolltoreadline);
                         bl.onscroll = _.debounce(function() {
                             $rootScope.updateBufferBottom();
                         }, 80);
@@ -190,7 +190,7 @@ weechat.controller('WeechatCtrl', ['$rootScope', '$scope', '$store', '$timeout',
         notifications.updateTitle(ab);
 
         $timeout(function() {
-            $rootScope.scrollWithBuffer(true);
+            $rootScope.scrollWithBuffer($scope.scrolltoreadline);
         });
         // If user wants to sync hotlist with weechat
         // we will send a /buffer bufferName command every time
@@ -303,6 +303,8 @@ weechat.controller('WeechatCtrl', ['$rootScope', '$scope', '$store', '$timeout',
     $store.bind($scope, "readlineBindings", false);
     // Save settings for non-native Emoji support
     $store.bind($scope, "enableJSEmoji", false);
+    // Save settins for scrolling to readline on buffer switch
+    $store.bind($scope, "scrolltoreadline", true);
 
     if (!$scope.fontfamily) {
         if (utils.isMobileUi()) {
