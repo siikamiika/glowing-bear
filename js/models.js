@@ -344,7 +344,8 @@ models.service('models', ['$rootScope', '$filter', function($rootScope, $filter)
               highlight: highlight,
               displayed: displayed,
               text: rtext,
-              is_nonhuman: tags_array.indexOf("irc_privmsg") == -1
+              is_nonhuman: tags_array.indexOf("irc_privmsg") == -1,
+              has_berrymotes: window.Bem && !!rtext.match(Bem.emoteRegex)
           };
 
     };
