@@ -330,6 +330,7 @@ models.service('models', ['$rootScope', '$filter', function($rootScope, $filter)
 
         var rtext = "";
         for (var i = 0; i < content.length; ++i) {
+            content[i].text = content[i].text.replace(/\\\\([\w-]+)/i, '[](/$1)'); // Berrymotes shortcut
             rtext += content[i].text;
         }
 

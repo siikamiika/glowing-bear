@@ -305,6 +305,8 @@ weechat.controller('WeechatCtrl', ['$rootScope', '$scope', '$store', '$timeout',
     $store.bind($scope, "enableJSEmoji", false);
     // Save settins for scrolling to readline on buffer switch
     $store.bind($scope, "scrolltoreadline", true);
+    // Save setting for berrymotes
+    $store.bind($scope, "enableBerrymotes", false);
 
     if (!$scope.fontfamily) {
         if (utils.isMobileUi()) {
