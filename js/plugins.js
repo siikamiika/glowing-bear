@@ -131,7 +131,7 @@ plugins.service('plugins', ['userPlugins', '$sce', function(userPlugins, $sce) {
  * 3. Add it to the plugins array.
  *
  */
-plugins.factory('userPlugins', function() {
+plugins.factory('userPlugins', ['$http', function($http) {
     // standard JSONp origin policy trick
     var jsonp = function (url, callback) {
         var callbackName = 'jsonp_callback_' + Math.round(100000 * Math.random());
@@ -391,11 +391,40 @@ plugins.factory('userPlugins', function() {
     );
     tweetPlugin.name = 'Tweet';
 
+    var imgurClientID = 'a83717ba569ccd5';
+    var imgurPlugin = new Plugin(
+        urlPlugin(function(url){
+            var match = url.match(/^https?:\/\/(?:www\.)?imgur.com(\/gallery)?\/([a-z0-9]+)$/i);
+            if ( !match )
+                return;
+
+            var type = match[1] || '';
+            var id = match[2];
+            $http({
+                method: 'GET',
+                url: 'https://api.imgur.com/3'+type+'/image/'+id+'.json',
+                headers: {
+                    'Authorization': 'Client-ID ' + imgurClientID
+                }
+            }).success(function(data){
+                if ( !data || !data.success )
+                    return;
+
+                var els = document.querySelectorAll('img[data-imgur-id="'+id+'"]');
+                for ( var i=0; i<els.length; ++i )
+                    els[i].setAttribute('src', data.data.link);
+            });
+
+            return '<a target="_blank" href="'+url+'"><img class="embed" data-imgur-id="'+id+'" /></a>';
+        })
+    );
+    imgurPlugin.name = 'Imgur';
+
     return {
 //        plugins: [youtubePlugin, dailymotionPlugin, allocinePlugin, imagePlugin, spotifyPlugin, cloudmusicPlugin, googlemapPlugin, asciinemaPlugin, yrPlugin, gistPlugin, tweetPlugin]
-        plugins: [imagePlugin]
+        plugins: [imagePlugin, imgurPlugin]
     };
 
 
-});
+}]);
 })();
