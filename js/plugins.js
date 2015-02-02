@@ -392,6 +392,10 @@ plugins.factory('userPlugins', ['$http', function($http) {
     tweetPlugin.name = 'Tweet';
 
     var imgurClientID = 'a83717ba569ccd5';
+    var imgurCache = {
+        '': {},
+        '/gallery': {}
+    };
     var imgurPlugin = new Plugin(
         urlPlugin(function(url){
             var match = url.match(/^https?:\/\/(?:www\.)?imgur.com(\/gallery)?\/([a-z0-9]+)$/i);
@@ -400,22 +404,29 @@ plugins.factory('userPlugins', ['$http', function($http) {
 
             var type = match[1] || '';
             var id = match[2];
-            $http({
-                method: 'GET',
-                url: 'https://api.imgur.com/3'+type+'/image/'+id+'.json',
-                headers: {
-                    'Authorization': 'Client-ID ' + imgurClientID
-                }
-            }).success(function(data){
-                if ( !data || !data.success )
-                    return;
 
-                var els = document.querySelectorAll('img[data-imgur-id="'+id+'"]');
-                for ( var i=0; i<els.length; ++i )
-                    els[i].setAttribute('src', data.data.link);
-            });
+            var src = imgurCache[type][id] || '';
+            if ( !src ){
+                $http({
+                    method: 'GET',
+                    url: 'https://api.imgur.com/3'+type+'/image/'+id+'.json',
+                    headers: {
+                        'Authorization': 'Client-ID ' + imgurClientID
+                    }
+                }).success(function(data){
+                    if ( !data || !data.success )
+                        return;
 
-            return '<a target="_blank" href="'+url+'"><img class="embed" data-imgur-id="'+id+'" /></a>';
+                    var src = data.data.link;
+                    imgurCache[type][id] = src;
+
+                    var els = document.querySelectorAll('img[data-imgur-id="'+id+'"]');
+                    for ( var i=0; i<els.length; ++i )
+                        els[i].setAttribute('src', src);
+                });
+            }
+
+            return '<a target="_blank" href="'+url+'"><img class="embed" data-imgur-id="'+id+'" src="'+src+'" /></a>';
         })
     );
     imgurPlugin.name = 'Imgur';
