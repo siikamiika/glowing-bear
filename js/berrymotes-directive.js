@@ -12,17 +12,15 @@ weechat.directive('berrymotes', ['$rootScope', function($rootScope) {
         },
         link: function(scope, element, attrs) {
             // ensure Bem is loaded and enabled
-            if ( !window.Bem || !Bem.enabled || !Bem.map || !scope.berrymotes() )
+            if ( !scope.berrymotes() || !window.Bem || !Bem.enabled || !Bem.map )
                 return;
 
             // emote after DOM is done
             var el = element[0];
             setTimeout(function(){
-                var node = el.firstChild.firstChild;
-                while ( node ){
+                for ( var node = el.firstChild.firstChild; node; node = node.nextSibling ){
                     if ( node.nodeType === 3 )
                         Bem.applyEmotesToTextNode(node);
-                    node = node.nextSibling;
                 }
             }, 0);
         }
