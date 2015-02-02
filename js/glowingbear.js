@@ -283,6 +283,8 @@ weechat.controller('WeechatCtrl', ['$rootScope', '$scope', '$store', '$timeout',
     $store.bind($scope, "nonicklist", nonicklist);
     // Save setting for displaying embeds
     $store.bind($scope, "noembed", noembed);
+    // Save setting for displaying NSFW embeds
+    $store.bind($scope, "hidensfw", true);
     // Save setting for channel ordering
     $store.bind($scope, "orderbyserver", true);
     // Save setting for updating favicon
@@ -318,6 +320,7 @@ weechat.controller('WeechatCtrl', ['$rootScope', '$scope', '$store', '$timeout',
 
     // Save setting for displaying embeds in rootScope so it can be used from service
     $rootScope.auto_display_embedded_content = $scope.noembed === false;
+    $rootScope.auto_display_nsfw_content = $scope.hidensfw === false;
 
     $scope.isSidebarVisible = function() {
         return document.getElementById('content').getAttribute('sidebar-state') === 'visible';
@@ -378,6 +381,9 @@ weechat.controller('WeechatCtrl', ['$rootScope', '$scope', '$store', '$timeout',
     // Watch model and update show setting when it changes
     $scope.$watch('noembed', function() {
         $rootScope.auto_display_embedded_content = $scope.noembed === false;
+    });
+    $scope.$watch('hidensfw', function() {
+        $rootScope.auto_display_nsfw_content = $scope.hidensfw === false;
     });
     // Watch model and update channel sorting when it changes
     $scope.$watch('orderbyserver', function() {
