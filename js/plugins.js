@@ -420,20 +420,20 @@ plugins.factory('userPlugins', ['$http', function($http) {
                     var src = data.data.link;
                     imgurCache[type][id] = src;
 
-                    var els = document.querySelectorAll('img[data-imgur-id="'+id+'"]');
+                    var els = document.querySelectorAll('img[data-imgur-type="'+type+'"][data-imgur-id="'+id+'"]');
                     for ( var i=0; i<els.length; ++i )
                         els[i].setAttribute('src', src);
                 });
             }
 
-            return '<a target="_blank" href="'+url+'"><img class="embed" data-imgur-id="'+id+'" src="'+src+'" /></a>';
+            return '<a target="_blank" href="'+url+'"><img class="embed" data-imgur-type="'+type+'" data-imgur-id="'+id+'" src="'+src+'" /></a>';
         })
     );
     imgurPlugin.name = 'Imgur';
 
     return {
 //        plugins: [youtubePlugin, dailymotionPlugin, allocinePlugin, imagePlugin, spotifyPlugin, cloudmusicPlugin, googlemapPlugin, asciinemaPlugin, yrPlugin, gistPlugin, tweetPlugin]
-        plugins: [imagePlugin, imgurPlugin]
+        plugins: [youtubePlugin, dailymotionPlugin, allocinePlugin, imagePlugin, spotifyPlugin, cloudmusicPlugin, googlemapPlugin, asciinemaPlugin, yrPlugin, imgurPlugin]
     };
 
 
