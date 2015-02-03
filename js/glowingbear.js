@@ -701,19 +701,21 @@ weechat.controller('WeechatCtrl', ['$rootScope', '$scope', '$store', '$timeout',
     function hasClassOrParent(el, cls){
         return el.hasClass(cls) || el.parents('.'+cls).length > 0;
     }
+    function bufferMousemove($event){
+        $scope.$apply(function(){
+            var target = angular.element($event.target);
+            $scope.selectTime = startedInTime || hasClassOrParent(target, 'time');
+            $scope.selectPrefix = startedInPrefix || $scope.selectTime || hasClassOrParent(target, 'prefix');
+        });
+    }
     $scope.bufferMousedown = function($event){
         var target = angular.element($event.target);
         startedInTime = hasClassOrParent(target, 'time');
         startedInPrefix = hasClassOrParent(target, 'prefix');
+        angular.element(document.getElementById('bufferlinestable')).on('mousemove', bufferMousemove);
     };
-    $scope.bufferMousemove = function($event){
-        // Only react when dragging
-        if ( $event.which !== 1 )
-            return;
-
-        var target = angular.element($event.target);
-        $scope.selectTime = startedInTime || hasClassOrParent(target, 'time');
-        $scope.selectPrefix = startedInPrefix || $scope.selectTime || hasClassOrParent(target, 'prefix');
+    $scope.bufferMouseup = function($event){
+        angular.element(document.getElementById('bufferlinestable')).off('mousemove', bufferMousemove);
     };
 
     // Prevent user from accidentally leaving the page
