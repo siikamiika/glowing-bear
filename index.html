@@ -257,7 +257,7 @@ $ openssl req -nodes -newkey rsa:4096 -keyout relay.pem -x509 -days 365 -out rel
             </li>
           </ul>
         </div>
-        <table ng-class="{'notimestamp':!showtimestamp,'notimestampseconds':!showtimestampSeconds}">
+        <table ng-class="{'notimestamp':!showtimestamp,'notimestampseconds':!showtimestampSeconds,'noselecttime':!selectTime,'noselectprefix':!selectPrefix}" ng-mousedown="bufferMousedown($event)" ng-mousemove="bufferMousemove($event)">
           <tbody>
             <tr class="bufferline">
               <td ng-hide="activeBuffer().allLinesFetched" colspan="3">

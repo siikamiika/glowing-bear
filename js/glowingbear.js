@@ -696,6 +696,26 @@ weechat.controller('WeechatCtrl', ['$rootScope', '$scope', '$store', '$timeout',
         }
     };
 
+    // Handle selection column logic
+    var startedInTime, startedInPrefix;
+    function hasClassOrParent(el, cls){
+        return el.hasClass(cls) || el.parents('.'+cls).length > 0;
+    }
+    $scope.bufferMousedown = function($event){
+        var target = angular.element($event.target);
+        startedInTime = hasClassOrParent(target, 'time');
+        startedInPrefix = hasClassOrParent(target, 'prefix');
+    };
+    $scope.bufferMousemove = function($event){
+        // Only react when dragging
+        if ( $event.which !== 1 )
+            return;
+
+        var target = angular.element($event.target);
+        $scope.selectTime = startedInTime || hasClassOrParent(target, 'time');
+        $scope.selectPrefix = startedInPrefix || $scope.selectTime || hasClassOrParent(target, 'prefix');
+    };
+
     // Prevent user from accidentally leaving the page
     window.onbeforeunload = function(event) {
 

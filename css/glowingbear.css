@@ -535,7 +535,9 @@ li.buffer a[title^="irc.server"] {
     font-size: small;
 }
 
-.unselectable {
+.unselectable,
+.noselecttime td.time,
+.noselectprefix td.prefix {
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
