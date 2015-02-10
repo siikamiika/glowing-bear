@@ -18,6 +18,11 @@ weechat.directive('berrymotes', ['$rootScope', function($rootScope) {
             // emote after DOM is done
             var el = element[0];
             setTimeout(function(){
+                var wasBottom = $rootScope.bufferBottom;
+                setTimeout(function(){
+                    $rootScope.updateBufferBottom(wasBottom);
+                }, 500);
+
                 for ( var node = el.firstChild.firstChild; node; node = node.nextSibling ){
                     if ( node.nodeType === 3 )
                         Bem.applyEmotesToTextNode(node);
