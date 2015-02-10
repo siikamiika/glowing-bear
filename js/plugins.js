@@ -426,9 +426,38 @@ plugins.factory('userPlugins', ['$http', function($http) {
     );
     imgurPlugin.name = 'Imgur';
 
+    // DeviantArt
+    var deviantartPlugin = new Plugin(
+        urlPlugin(function(url){
+            var match = url.match(/^https?:\/\/(?:[^.]+\.)?deviantart.com\/art\//i);
+            if ( !match )
+                return;
+
+            var id = encodeURIComponent(url);
+
+            $http({
+                cache: true,
+                method: 'JSONP',
+                url: 'https://backend.deviantart.com/oembed?format=jsonp&callback=JSON_CALLBACK&url='+id
+            }).success(function(data){
+                if ( !data )
+                    return;
+
+                var els = document.querySelectorAll('img[data-deviantart-id="'+id+'"]');
+                for ( var i=0; i<els.length; ++i ){
+                    els[i].setAttribute('height', data.height)
+                    els[i].setAttribute('src', data.url);
+                }
+            });
+
+            return '<a target="_blank" href="'+url+'"><img class="embed" data-deviantart-id="'+id+'" /></a>';
+        })
+    );
+    deviantartPlugin.name = 'DeviantArt';
+
     return {
 //        plugins: [youtubePlugin, dailymotionPlugin, allocinePlugin, imagePlugin, spotifyPlugin, cloudmusicPlugin, googlemapPlugin, asciinemaPlugin, yrPlugin, gistPlugin, tweetPlugin]
-        plugins: [youtubePlugin, dailymotionPlugin, allocinePlugin, imagePlugin, spotifyPlugin, cloudmusicPlugin, googlemapPlugin, asciinemaPlugin, yrPlugin, imgurPlugin]
+        plugins: [youtubePlugin, dailymotionPlugin, allocinePlugin, imagePlugin, spotifyPlugin, cloudmusicPlugin, googlemapPlugin, asciinemaPlugin, yrPlugin, imgurPlugin, deviantartPlugin]
     };
 
 
