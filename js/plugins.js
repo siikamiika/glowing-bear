@@ -426,32 +426,59 @@ plugins.factory('userPlugins', ['$http', function($http) {
     );
     imgurPlugin.name = 'Imgur';
 
-    // DeviantArt
-    var deviantartPlugin = new Plugin(
-        urlPlugin(function(url){
-            var match = url.match(/^https?:\/\/(?:[^.]+\.)?deviantart.com\/art\//i);
-            if ( !match )
-                return;
+    // Generic oEmbed plugin factory (see http://www.oembed.com/)
+    var makeOembedPlugin = function(endpoint, schemes){
+        endpoint += endpoint.indexOf('?')===-1 ? '?' : '&';
+        endpoint += 'format=jsonp&callback=JSON_CALLBACK&url=';
 
-            var id = encodeURIComponent(url);
+        var pattern = new RegExp(
+            '(?:' + schemes.map(function(scheme){
+                scheme = scheme.replace(/^http:/i, 'https?:');
+                scheme = scheme.replace(/\*\./g, '(.+\\.)?');
+                scheme = scheme.replace(/\*/g, '.+');
+                return scheme;
+            }).join('|') + ')',
+            'i'
+        );
 
-            $http({
-                cache: true,
-                method: 'JSONP',
-                url: 'https://backend.deviantart.com/oembed?format=jsonp&callback=JSON_CALLBACK&url='+id
-            }).success(function(data){
-                if ( !data )
+        return new Plugin(
+            urlPlugin(function(url){
+                var match = url.match(pattern);
+                if ( !match )
                     return;
 
-                var els = document.querySelectorAll('img[data-deviantart-id="'+id+'"]');
-                for ( var i=0; i<els.length; ++i ){
-                    els[i].setAttribute('height', data.height)
-                    els[i].setAttribute('src', data.url);
-                }
-            });
+                var id = encodeURIComponent(url);
 
-            return '<a target="_blank" href="'+url+'"><img class="embed" data-deviantart-id="'+id+'" /></a>';
-        })
+                $http({
+                    cache: true,
+                    method: 'JSONP',
+                    url: endpoint + id
+                }).success(function(data){
+                    // TODO: support other types?
+                    if ( !data || data.type !== 'photo' )
+                        return;
+
+                    var els = document.querySelectorAll('img[data-oembed-id="'+id+'"]');
+                    for ( var i=0; i<els.length; ++i ){
+                        els[i].setAttribute('height', data.height)
+                        els[i].setAttribute('src', data.url);
+                    }
+                });
+
+                return '<a target="_blank" href="'+url+'"><img class="embed" data-oembed-id="'+id+'" /></a>';
+            })
+        );
+    };
+
+    // DeviantArt
+    var deviantartPlugin = makeOembedPlugin(
+        'https://backend.deviantart.com/oembed',
+        [
+            'http://*.deviantart.com/art/*',
+            'http://*.deviantart.com/*#/d*',
+            'http://fav.me/*',
+            'http://sta.sh/*'
+        ]
     );
     deviantartPlugin.name = 'DeviantArt';
 
