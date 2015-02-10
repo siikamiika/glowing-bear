@@ -363,6 +363,7 @@ plugins.factory('userPlugins', ['$http', function($http) {
     );
     gistPlugin.name = 'Gist';
 
+    // Twitter
     var tweetPlugin = new Plugin(
         urlPlugin(function(url) {
             var regexp = /^https?:\/\/twitter\.com\/(?:#!\/)?(\w+)\/status(?:es)?\/(\d+)/i;
@@ -391,11 +392,8 @@ plugins.factory('userPlugins', ['$http', function($http) {
     );
     tweetPlugin.name = 'Tweet';
 
+    // Imgur
     var imgurClientID = 'a83717ba569ccd5';
-    var imgurCache = {
-        '': {},
-        '/gallery': {}
-    };
     var imgurPlugin = new Plugin(
         urlPlugin(function(url){
             var match = url.match(/^https?:\/\/(?:www\.)?imgur.com(\/gallery)?\/([a-z0-9]+)$/i);
@@ -405,28 +403,25 @@ plugins.factory('userPlugins', ['$http', function($http) {
             var type = match[1] || '';
             var id = match[2];
 
-            var src = imgurCache[type][id] || '';
-            if ( !src ){
-                $http({
-                    method: 'GET',
-                    url: 'https://api.imgur.com/3'+type+'/image/'+id+'.json',
-                    headers: {
-                        'Authorization': 'Client-ID ' + imgurClientID
-                    }
-                }).success(function(data){
-                    if ( !data || !data.success )
-                        return;
+            $http({
+                cache: true,
+                method: 'GET',
+                url: 'https://api.imgur.com/3'+type+'/image/'+id+'.json',
+                headers: {
+                    'Authorization': 'Client-ID ' + imgurClientID
+                }
+            }).success(function(data){
+                if ( !data || !data.success )
+                    return;
 
-                    var src = data.data.link;
-                    imgurCache[type][id] = src;
+                var els = document.querySelectorAll('img[data-imgur-type="'+type+'"][data-imgur-id="'+id+'"]');
+                for ( var i=0; i<els.length; ++i ){
+                    els[i].setAttribute('height', data.data.height)
+                    els[i].setAttribute('src', data.data.link);
+                }
+            });
 
-                    var els = document.querySelectorAll('img[data-imgur-type="'+type+'"][data-imgur-id="'+id+'"]');
-                    for ( var i=0; i<els.length; ++i )
-                        els[i].setAttribute('src', src);
-                });
-            }
-
-            return '<a target="_blank" href="'+url+'"><img class="embed" data-imgur-type="'+type+'" data-imgur-id="'+id+'" src="'+src+'" /></a>';
+            return '<a target="_blank" href="'+url+'"><img class="embed" data-imgur-type="'+type+'" data-imgur-id="'+id+'" /></a>';
         })
     );
     imgurPlugin.name = 'Imgur';

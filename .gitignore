@@ -1,2 +1,9 @@
 bower_components/
 node_modules/
+/doodle
+/stats
+/robots.txt
+/TwitterAPIExchange.php
+/tweet.php
+*.sublime-*
+
