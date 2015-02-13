@@ -293,6 +293,8 @@ weechat.controller('WeechatCtrl', ['$rootScope', '$scope', '$store', '$timeout',
     $store.bind($scope, "showtimestamp", showtimestamp);
     // Save setting for showing seconds on timestamps
     $store.bind($scope, "showtimestampSeconds", false);
+    // Save setting for notification popup
+    $store.bind($scope, "showDesktopNotifications", true);
     // Save setting for playing sound on notification
     $store.bind($scope, "soundnotification", false);
     // Save setting for font family
@@ -321,6 +323,7 @@ weechat.controller('WeechatCtrl', ['$rootScope', '$scope', '$store', '$timeout',
     // Save setting for displaying embeds in rootScope so it can be used from service
     $rootScope.auto_display_embedded_content = $scope.noembed === false;
     $rootScope.auto_display_nsfw_content = $scope.hidensfw === false;
+    $rootScope.show_desktop_notifications = $scope.showDesktopNotifications === true;
 
     $scope.isSidebarVisible = function() {
         return document.getElementById('content').getAttribute('sidebar-state') === 'visible';
@@ -384,6 +387,9 @@ weechat.controller('WeechatCtrl', ['$rootScope', '$scope', '$store', '$timeout',
     });
     $scope.$watch('hidensfw', function() {
         $rootScope.auto_display_nsfw_content = $scope.hidensfw === false;
+    });
+    $scope.$watch('showDesktopNotifications', function() {
+        $rootScope.show_desktop_notifications = $scope.showDesktopNotifications === true;
     });
     // Watch model and update channel sorting when it changes
     $scope.$watch('orderbyserver', function() {
