@@ -475,7 +475,7 @@ weechat.controller('WeechatCtrl', ['$rootScope', '$scope', '$store', '$timeout',
                 if (switchBuffer && readmarker && $scope.scrolltoreadline) {
                     // Switching channels, scroll to read marker
                     bl.scrollTop = readmarker.offsetTop - readmarker.parentElement.scrollHeight + readmarker.scrollHeight;
-                } else if (moreLines) {
+                } else if (moreLines && $scope.scrolltoreadline) {
                     // We fetched more lines but the read marker is still out of view
                     // Keep the scroll position constant
                     bl.scrollTop = bl.scrollHeight - bl.clientHeight - sVal;
