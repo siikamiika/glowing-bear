@@ -399,25 +399,29 @@ plugins.factory('userPlugins', ['$http', function($http) {
         var type = match[1] || '';
         var id = match[2];
 
-        $http({
-            cache: true,
-            method: 'GET',
-            url: 'https://api.imgur.com/3'+type+'/image/'+id+'.json',
-            headers: {
-                'Authorization': 'Client-ID ' + imgurClientID
-            }
-        }).success(function(data){
-            if ( !data || !data.success )
-                return;
+        return function(){
+            var element = this.getElement();
 
-            var els = document.querySelectorAll('img[data-imgur-type="'+type+'"][data-imgur-id="'+id+'"]');
-            for ( var i=0; i<els.length; ++i ){
-                els[i].setAttribute('height', data.data.height)
-                els[i].setAttribute('src', data.data.link);
-            }
-        });
+            $http({
+                cache: true,
+                method: 'GET',
+                url: 'https://api.imgur.com/3'+type+'/image/'+id+'.json',
+                headers: {
+                    'Authorization': 'Client-ID ' + imgurClientID
+                }
+            }).success(function(data){
+                if ( !data || !data.success )
+                    return;
 
-        return '<a target="_blank" href="'+url+'"><img class="embed" data-imgur-type="'+type+'" data-imgur-id="'+id+'" /></a>';
+                var els = document.querySelectorAll('img[data-imgur-type="'+type+'"][data-imgur-id="'+id+'"]');
+                for ( var i=0; i<els.length; ++i ){
+                    els[i].setAttribute('height', data.data.height)
+                    els[i].setAttribute('src', data.data.link);
+                }
+            });
+
+            element.innerHTML = '<a target="_blank" href="'+url+'"><img class="embed" data-imgur-type="'+type+'" data-imgur-id="'+id+'" /></a>';
+        };
     });
 
     // Generic oEmbed plugin factory (see http://www.oembed.com/)
@@ -442,23 +446,27 @@ plugins.factory('userPlugins', ['$http', function($http) {
 
             var id = encodeURIComponent(url);
 
-            $http({
-                cache: true,
-                method: 'JSONP',
-                url: endpoint + id
-            }).success(function(data){
-                // TODO: support other types?
-                if ( !data || data.type !== 'photo' )
-                    return;
+            return function(){
+                var element = this.getElement();
 
-                var els = document.querySelectorAll('img[data-oembed-id="'+id+'"]');
-                for ( var i=0; i<els.length; ++i ){
-                    els[i].setAttribute('height', data.height)
-                    els[i].setAttribute('src', data.url);
-                }
-            });
+                $http({
+                    cache: true,
+                    method: 'JSONP',
+                    url: endpoint + id
+                }).success(function(data){
+                    // TODO: support other types?
+                    if ( !data || data.type !== 'photo' )
+                        return;
 
-            return '<a target="_blank" href="'+url+'"><img class="embed" data-oembed-id="'+id+'" /></a>';
+                    var els = document.querySelectorAll('img[data-oembed-id="'+id+'"]');
+                    for ( var i=0; i<els.length; ++i ){
+                        els[i].setAttribute('height', data.height)
+                        els[i].setAttribute('src', data.url);
+                    }
+
+                    element.innerHTML = '<a target="_blank" href="'+url+'"><img class="embed" data-oembed-id="'+id+'" /></a>';
+                });
+            };
         });
     };
 

@@ -27,16 +27,21 @@ weechat.controller('WeechatCtrl', ['$rootScope', '$scope', '$store', '$timeout',
         'autoconnect': false,
         'nonicklist': utils.isMobileUi(),
         'noembed': utils.isMobileUi(),
+        'hidensfw': true,
         'onlyUnread': false,
         'hotlistsync': true,
+        'scrolltoreadline': true,
         'orderbyserver': true,
         'useFavico': true,
+        'showDesktopNotifications': false,
+        'soundnotification': false,
         'showtimestamp': true,
         'showtimestampSeconds': false,
         'fontsize': '14px',
         'fontfamily': (utils.isMobileUi() ? 'sans-serif' : 'Inconsolata, Consolas, Monaco, Ubuntu Mono, monospace'),
         'readlineBindings': false,
-        'enableJSEmoji': false
+        'enableJSEmoji': false,
+        'enableBerrymotes': false
     });
     $scope.settings = settings;
 
