@@ -392,7 +392,7 @@ plugins.factory('userPlugins', ['$http', function($http) {
     // Imgur
     var imgurClientID = 'a83717ba569ccd5';
     var imgurPlugin = new UrlPlugin('Imgur', function(url){
-        var match = url.match(/^https?:\/\/(?:www\.)?imgur.com(\/gallery)?\/([a-z0-9]+)$/i);
+        var match = url.match(/^https?:\/\/(?:www\.|i\.)?imgur.com(\/gallery)?\/([a-z0-9]+)(?:\.gifv)?$/i);
         if ( !match )
             return;
 
