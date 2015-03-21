@@ -683,3 +683,7 @@ img.emoji {
         padding-right: 0px !important;
     }
 }
+
+img.eddymote {
+    vertical-align: baseline;
+}

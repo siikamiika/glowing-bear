@@ -41,7 +41,8 @@ weechat.controller('WeechatCtrl', ['$rootScope', '$scope', '$store', '$timeout',
         'fontfamily': (utils.isMobileUi() ? 'sans-serif' : 'Inconsolata, Consolas, Monaco, Ubuntu Mono, monospace'),
         'readlineBindings': false,
         'enableJSEmoji': false,
-        'enableBerrymotes': false
+        'enableBerrymotes': false,
+        'enableEddymotes': false
     });
     $scope.settings = settings;
 
