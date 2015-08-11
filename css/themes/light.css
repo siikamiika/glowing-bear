@@ -70,6 +70,10 @@ select.form-control, select option, input[type=text], input[type=password], #sen
     background: #e1e1e1;
 }
 
+.nav-pills li.unreadmessage {
+    background: #bacdff;
+}
+
 .nav-pills > li > a {
     color: #222;
 }

@@ -90,6 +90,10 @@ input[type=text], input[type=password], #sendMessage, .badge, .btn-send {
     background: #232323;
 }
 
+.nav-pills li.unreadmessage {
+    background: #151649;
+}
+
 .nav-pills > li > a {
     color: #ddd;
 }
