@@ -772,3 +772,12 @@ img.emojione {
         padding-right: 0px !important;
     }
 }
+
+.bufferline.nonhuman {
+	opacity: 0.8;
+}
+
+img.eddymote {
+	vertical-align: baseline;
+}
+

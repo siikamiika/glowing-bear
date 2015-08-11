@@ -16,6 +16,7 @@
     <link rel="shortcut icon" type="image/png" href="assets/img/favicon.png" >
     <link href="css/glowingbear.css" rel="stylesheet" media="screen">
     <link href="css/themes/dark.css" rel="stylesheet" media="screen" id="themeCSS" />
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
     <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.3.14/angular.min.js"></script>
     <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.3.14/angular-route.min.js"></script>
     <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.3.14/angular-sanitize.min.js"></script>
@@ -38,6 +39,7 @@
     <script type="text/javascript" src="js/websockets.js"></script>
     <script type="text/javascript" src="js/models.js"></script>
     <script type="text/javascript" src="js/plugins.js"></script>
+    <script type="text/javascript" src="js/berrymotes-directive.js"></script>
     <script type="text/javascript" src="3rdparty/favico-0.3.5.min.js"></script>
   </head>
   <body ng-controller="WeechatCtrl" ng-keydown="handleKeyPress($event)" ng-keyup="handleKeyRelease($event)"  ng-keypress="handleKeyPress($event)" ng-class="{'no-overflow': connected}" lang="en-US">
@@ -248,7 +250,7 @@ $ openssl req -nodes -newkey rsa:4096 -keyout relay.pem -x509 -days 365 -out rel
               <input class="form-control favorite-font" type="text" id="bufferFilter" ng-model="search" ng-keydown="handleSearchBoxKey($event)" placeholder="Search" autocomplete="off">
             </form>
           </li>
-          <li class="buffer" ng-class="{'active': buffer.active, 'indent': buffer.indent, 'channel': buffer.type === 'channel', 'channel_hash': buffer.prefix === '#', 'channel_plus': buffer.prefix === '+', 'channel_ampersand': buffer.prefix === '&', 'private': buffer.type === 'private'}" ng-repeat="(key, buffer) in (filteredBuffers = (getBuffers() | toArray:'withidx' | filter:{fullName:search} | filter:hasUnread | orderBy:predicate | getBufferQuickKeys:this))">
+          <li class="buffer" ng-class="{'active': buffer.active, 'indent': buffer.indent, 'channel': buffer.type === 'channel', 'channel_hash': buffer.prefix === '#', 'channel_plus': buffer.prefix === '+', 'channel_ampersand': buffer.prefix === '&', 'private': buffer.type === 'private', 'unreadmessage': buffer.unread, 'unreadhighlight': buffer.notification}" ng-repeat="(key, buffer) in (filteredBuffers = (getBuffers() | toArray:'withidx' | filter:{fullName:search} | filter:hasUnread | orderBy:predicate | getBufferQuickKeys:this))">
             <a ng-click="setActiveBuffer(buffer.id)" title="{{ buffer.fullName }}">
               <span class="badge pull-right" ng-class="{'danger': buffer.notification}" ng-if="buffer.notification || buffer.unread" ng-bind="buffer.notification || buffer.unread"></span>
               <span class="buffer-quick-key">{{ buffer.$quickKey }}</span>
@@ -265,7 +267,7 @@ $ openssl req -nodes -newkey rsa:4096 -keyout relay.pem -x509 -days 365 -out rel
             </li>
           </ul>
         </div>
-        <table ng-class="{'notimestamp':!settings.showtimestamp,'notimestampseconds':!settings.showtimestampSeconds}">
+        <table id="bufferlinestable" ng-class="{'notimestamp':!settings.showtimestamp,'notimestampseconds':!settings.showtimestampSeconds,'noselecttime':!selectTime,'noselectprefix':!selectPrefix}" ng-mousedown="bufferMousedown($event)" ng-mouseup="bufferMouseup($event)" ng-mouseleave="bufferMouseup($event)">
           <tbody>
             <tr class="bufferline">
               <td ng-hide="activeBuffer().allLinesFetched" colspan="3">
@@ -275,7 +277,7 @@ $ openssl req -nodes -newkey rsa:4096 -keyout relay.pem -x509 -days 365 -out rel
             </tr>
           </tbody>
           <tbody ng-repeat="bufferline in bufferlines">
-            <tr class="bufferline">
+            <tr class="bufferline" ng-class="{'nonhuman': bufferline.is_nonhuman}">
               <td class="time">
                 <span class="date" ng-class="::{'repeated-time': bufferline.shortTime==bufferlines[$index-1].shortTime}">
                   <span class="cof-chat_time cob-chat_time coa-chat_time" ng-bind="::(bufferline.date|date:'HH')"></span><span class="cof-chat_time_delimiters cob-chat_time_delimiters coa-chat_time_delimiters">:</span><span class="cof-chat_time cob-chat_time coa-chat_time" ng-bind="::(bufferline.date|date:'mm')"></span><span class="seconds"><span class="cof-chat_time_delimiters cob-chat_time_delimiters coa-chat_time_delimiters">:</span><span class="cof-chat_time cob-chat_time coa-chat_time" ng-bind="::(bufferline.date|date:'ss')"></span></span>
@@ -284,7 +286,7 @@ $ openssl req -nodes -newkey rsa:4096 -keyout relay.pem -x509 -days 365 -out rel
               <td class="prefix"><a ng-click="addMention(bufferline.prefix)"><span class="hidden-bracket">&lt;</span><span ng-repeat="part in ::bufferline.prefix" ng-class="::part.classes" ng-bind="::part.text|prefixlimit:25"></span><span class="hidden-bracket">&gt;</span></a></td><!--
            --><td class="message"><!--
              --><div ng-repeat="metadata in ::bufferline.metadata" plugin data="::metadata"></div><!--
-             --><span ng-repeat="part in ::bufferline.content" class="text" ng-class="::part.classes.concat(['line-' + part.$$hashKey.replace(':','_')])" ng-bind-html="::part.text | linky:'_blank' | DOMfilter:'irclinky' | DOMfilter:'emojify':settings.enableJSEmoji | DOMfilter:'inlinecolour' | DOMfilter:'mathjax':('.line-' + part.$$hashKey.replace(':','_')):settings.enableMathjax"></span>
+             --><span ng-repeat="part in ::bufferline.content" class="text" ng-class="::part.classes.concat(['line-' + part.$$hashKey.replace(':','_')])" ng-bind-html="::part.text | linky:'_blank' | DOMfilter:'irclinky' | DOMfilter:'emojify':settings.enableJSEmoji | DOMfilter:'inlinecolour' | DOMfilter:'mathjax':('.line-' + part.$$hashKey.replace(':','_')):settings.enableMathjax | DOMfilter:'eddymotes':settings.enableEddymotes" berrymotes="::bufferline.has_berrymotes &amp;&amp; settings.enableBerrymotes"></span>
               </td>
             </tr>
             <tr class="readmarker" ng-if="activeBuffer().lastSeen==$index">
@@ -379,10 +381,22 @@ $ openssl req -nodes -newkey rsa:4096 -keyout relay.pem -x509 -days 365 -out rel
                   <div class="checkbox">
                     <label>
                       <input type="checkbox" ng-model="settings.noembed">
-                       Hide embedded content by default<span class="text-muted settings-help">NSFW content will be hidden regardless of this choice</span>
+                       Hide all embedded content by default
                     </label>
                   </div>
                 </form>
+                <ul ng-show="!settings.noembed">
+                  <li>
+                    <form class="form-inline" role="form">
+                      <div class="checkbox">
+                        <label>
+                          <input type="checkbox" ng-model="settings.hidensfw">
+                           Hide NSFW embedded content by default
+                        </label>
+                      </div>
+                    </form>
+                  </li>
+                </ul>
               </li>
               <li>
                 <form class="form-inline" role="form">
@@ -464,6 +478,26 @@ $ openssl req -nodes -newkey rsa:4096 -keyout relay.pem -x509 -days 365 -out rel
                   </div>
                 </form>
               </li>
+              <li>
+                <form class="form-inline" role="form">
+                  <div class="checkbox">
+                    <label>
+                      <input type="checkbox" ng-model="settings.enableBerrymotes">
+                      Enable Berrymotes
+                    </label>
+                  </div>
+                </form>
+              </li>
+              <li>
+                <form class="form-inline" role="form">
+                  <div class="checkbox">
+                    <label>
+                      <input type="checkbox" ng-model="settings.enableEddymotes">
+                      Enable Eddymotes
+                    </label>
+                  </div>
+                </form>
+              </li>
             </ul>
           </div>
           <div class="modal-footer">
@@ -487,5 +521,6 @@ $ openssl req -nodes -newkey rsa:4096 -keyout relay.pem -x509 -days 365 -out rel
         </div><!-- /.modal-content -->
       </div><!-- /.modal-dialog -->
     </div><!-- /.modal -->
+    <script ng-if="settings.enableBerrymotes" ng-src="//dl.atte.fi/lib/berrymotes.js"></script>
   </body>
 </html>

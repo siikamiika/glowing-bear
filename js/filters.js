@@ -185,4 +185,21 @@ weechat.filter('prefixlimit', function() {
     };
 });
 
+weechat.filter('eddymotes', function(){
+    var re = /:[a-z0-9]+:/g;
+    var str = '<img \
+            class="eddymote" \
+            src="//eddykk.com/kihveliseina/smilesv10_pidgin/atte.php?kaksoispiste=$&" \
+            title="$&" \
+            alt="$&" \
+            onerror="this.parentNode.replaceChild(document.createTextNode(\'$&\'), this)" \
+        />';
+    return function(text, enabled){
+        if ( enabled === true )
+            return text.replace(re, str);
+        else
+            return text;
+    };
+});
+
 })();

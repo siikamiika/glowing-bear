@@ -342,21 +342,23 @@ models.service('models', ['$rootScope', '$filter', function($rootScope, $filter)
 
         var rtext = "";
         for (var i = 0; i < content.length; ++i) {
+            content[i].text = content[i].text.replace(/\\\\([\w-]+)/i, '[](/$1)'); // Berrymotes shortcut
             rtext += content[i].text;
         }
 
-       return {
-            prefix: prefix,
-            content: content,
-            date: date,
-            shortTime: shortTime,
-            buffer: buffer,
-            tags: tags_array,
-            highlight: highlight,
-            displayed: displayed,
-            text: rtext
-
-        };
+        return {
+              prefix: prefix,
+              content: content,
+              date: date,
+              shortTime: shortTime,
+              buffer: buffer,
+              tags: tags_array,
+              highlight: highlight,
+              displayed: displayed,
+              text: rtext,
+              is_nonhuman: tags_array.indexOf("irc_privmsg") == -1,
+              has_berrymotes: window.Bem && !!rtext.match(Bem.emoteRegex)
+          };
 
     };
 

@@ -158,7 +158,7 @@ plugins.service('plugins', ['userPlugins', '$sce', function(userPlugins, $sce) {
  * 3. Add it to the plugins array.
  *
  */
-plugins.factory('userPlugins', function() {
+plugins.factory('userPlugins', ['$http', function($http) {
     // standard JSONp origin policy trick
     var jsonp = function (url, callback) {
         var callbackName = 'jsonp_callback_' + Math.round(100000 * Math.random());
@@ -390,10 +390,103 @@ plugins.factory('userPlugins', function() {
         }
     });
 
+    // Imgur
+    var imgurClientID = 'a83717ba569ccd5';
+    var imgurPlugin = new UrlPlugin('Imgur', function(url){
+        var match = url.match(/^https?:\/\/(?:www\.|i\.)?imgur.com(\/gallery)?\/([a-z0-9]+)(?:\.gifv)?$/i);
+        if ( !match )
+            return;
+
+        var type = match[1] || '';
+        var id = match[2];
+
+        return function(){
+            var element = this.getElement();
+
+            $http({
+                cache: true,
+                method: 'GET',
+                url: 'https://api.imgur.com/3'+type+'/image/'+id+'.json',
+                headers: {
+                    'Authorization': 'Client-ID ' + imgurClientID
+                }
+            }).success(function(data){
+                if ( !data || !data.success )
+                    return;
+
+                var els = document.querySelectorAll('img[data-imgur-type="'+type+'"][data-imgur-id="'+id+'"]');
+                for ( var i=0; i<els.length; ++i ){
+                    els[i].setAttribute('height', data.data.height)
+                    els[i].setAttribute('src', data.data.link);
+                }
+            });
+
+            element.innerHTML = '<a target="_blank" href="'+url+'"><img class="embed" data-imgur-type="'+type+'" data-imgur-id="'+id+'" /></a>';
+        };
+    });
+
+    // Generic oEmbed plugin factory (see http://www.oembed.com/)
+    var makeOembedPlugin = function(name, endpoint, schemes){
+        endpoint += endpoint.indexOf('?')===-1 ? '?' : '&';
+        endpoint += 'format=jsonp&callback=JSON_CALLBACK&url=';
+
+        var pattern = new RegExp(
+            '(?:' + schemes.map(function(scheme){
+                scheme = scheme.replace(/^http:/i, 'https?:');
+                scheme = scheme.replace(/\*\./g, '(.+\\.)?');
+                scheme = scheme.replace(/\*/g, '.+');
+                return scheme;
+            }).join('|') + ')',
+            'i'
+        );
+
+        return new UrlPlugin(name, function(url){
+            var match = url.match(pattern);
+            if ( !match )
+                return;
+
+            var id = encodeURIComponent(url);
+
+            return function(){
+                var element = this.getElement();
+
+                $http({
+                    cache: true,
+                    method: 'JSONP',
+                    url: endpoint + id
+                }).success(function(data){
+                    // TODO: support other types?
+                    if ( !data || data.type !== 'photo' )
+                        return;
+
+                    var els = document.querySelectorAll('img[data-oembed-id="'+id+'"]');
+                    for ( var i=0; i<els.length; ++i ){
+                        els[i].setAttribute('height', data.height)
+                        els[i].setAttribute('src', data.url);
+                    }
+
+                    element.innerHTML = '<a target="_blank" href="'+url+'"><img class="embed" data-oembed-id="'+id+'" /></a>';
+                });
+            };
+        });
+    };
+
+    // DeviantArt
+    var deviantartPlugin = makeOembedPlugin(
+        'DeviantArt',
+        'https://backend.deviantart.com/oembed',
+        [
+            'http://*.deviantart.com/art/*',
+            'http://*.deviantart.com/*#/d*',
+            'http://fav.me/*',
+            'http://sta.sh/*'
+        ]
+    );
+
     return {
-        plugins: [youtubePlugin, dailymotionPlugin, allocinePlugin, imagePlugin, videoPlugin, spotifyPlugin, cloudmusicPlugin, googlemapPlugin, asciinemaPlugin, yrPlugin, gistPlugin, tweetPlugin, vinePlugin]
+        plugins: [youtubePlugin, dailymotionPlugin, allocinePlugin, imagePlugin, videoPlugin, spotifyPlugin, cloudmusicPlugin, googlemapPlugin, asciinemaPlugin, yrPlugin, gistPlugin, tweetPlugin, vinePlugin, imgurPlugin, deviantartPlugin]
     };
 
 
-});
+}]);
 })();
