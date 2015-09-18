@@ -7,7 +7,7 @@
 
 var models = angular.module('weechatModels', []);
 
-models.service('models', ['$rootScope', '$filter', function($rootScope, $filter) {
+models.service('models', ['$rootScope', '$filter', 'settings', function($rootScope, $filter, settings) {
     // WeeChat version
     this.version = null;
 
@@ -342,7 +342,10 @@ models.service('models', ['$rootScope', '$filter', function($rootScope, $filter)
 
         var rtext = "";
         for (var i = 0; i < content.length; ++i) {
-            content[i].text = content[i].text.replace(/\\\\([\w-]+)/i, '[](/$1)'); // Berrymotes shortcut
+            // Berrymotes shortcut syntax
+            if ( settings.enableBerrymotes )
+                content[i].text = content[i].text.replace(/\\\\([\w-]+)/i, '[](/$1)');
+
             rtext += content[i].text;
         }
 
