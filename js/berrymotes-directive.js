@@ -23,7 +23,8 @@ weechat.directive('berrymotes', ['$rootScope', function($rootScope) {
                     $rootScope.updateBufferBottom(wasBottom);
                 }, 500);
 
-                for ( var node = el.firstChild.firstChild; node; node = node.nextSibling ){
+                for ( var node = el.firstChild; node; node = node.nextSibling ){
+                    // text node
                     if ( node.nodeType === 3 )
                         Bem.applyEmotesToTextNode(node);
                 }
