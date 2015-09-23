@@ -25,7 +25,9 @@ weechat.directive('inputBar', function() {
 
             // E.g. Turn :smile: into the unicode equivalent
             $scope.inputChanged = function() {
-                $scope.command = emojione.shortnameToUnicode($scope.command);
+                if (settings.enableEmojione) {
+                    $scope.command = emojione.shortnameToUnicode($scope.command);
+                }
             };
 
             /*

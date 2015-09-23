@@ -45,7 +45,8 @@ weechat.controller('WeechatCtrl', ['$rootScope', '$scope', '$store', '$timeout',
         'enableJSEmoji': (utils.isMobileUi() ? false : true),
         'enableMathjax': false,
         'enableBerrymotes': false,
-        'enableEddymotes': false
+        'enableEddymotes': false,
+        'enableEmojione': true
     });
     $scope.settings = settings;
 
