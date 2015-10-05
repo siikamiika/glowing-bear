@@ -182,10 +182,12 @@ weechat.directive('inputBar', function() {
                 var code = $event.keyCode ? $event.keyCode : $event.charCode;
 
                 // Safari doesn't implement DOM 3 input events yet as of 8.0.6
-                var altg = $event.getModifierState ? $event.getModifierState('AltGraph') : false;
+                var altgMac = $event.getModifierState ? $event.getModifierState('AltGraph') : false;
+                // Windows interprets AltGr as Ctrl+Alt and the key is used for inputting
+                // special characters on the US international keyboard and such
+                var altgWin = $event.altKey && $event.ctrlKey;
 
-                // Mac OSX behaves differntly for altgr, so we check for that
-                if (altg) {
+                if (altgMac || altgWin) {
                     // We don't handle any anything with altgr
                     return false;
                 }
